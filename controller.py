@@ -32,6 +32,6 @@ class PID():
         if self.error_signal_previous is None:
             control_d = 0.
         else:
-            control_d = self.gain_kd * (error_signal - self.error_signal_previous) / time_delay
+            control_d = -self.gain_kd * (error_signal - self.error_signal_previous) / time_delay
         self.error_signal_previous = error_signal
         return control_d
