@@ -28,16 +28,16 @@ class LineController(Node):
 
     def centroid_callback(self, msg):
         '''callback for the centroid'''
-		if msg_previous is None:
-			self.msg_previous = msg 
-			return # need to skip the first time because of none value
+        if self.msg_previous is None:
+            time_delay = 0.1 # assume for first one 
+        else:
+            time_delay = mu.stamp_difference(msg.header.stamp, self.msg_previous.header.stamp)
+        return
         image_width = 640. # pixels (found from downloading image and looking at size)
         img_center = image_width / 2.0
         error_signal = Float64()
         error_signal.data = img_center - (msg.point.x) # compute error
         self.error_pub.publish(error_signal) # publish error
-        
-        time_delay = mu.stamp_difference(msg.header.stamp, self.msg_previous.header.stamp)
 
         msg_twist = Twist()
         msg_twist.linear.x = self.lin_speed
