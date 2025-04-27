@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 ''' node to command the angular speed of teh robot to make sure the line is always at the center of the image'''
+import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64
 import robot_model as rm
-import image_segment
 import controller
 
 class LineController(Node):
@@ -33,8 +33,8 @@ class LineController(Node):
 		self.error_pub.publish(error_signal) # publish error
 
 		msg_twist = Twist()
-		msg_twist.linear.x = lin_speed
-		msg_twist.angular.z = pid.proportional() + pid.derivative() + pid.integral()
+		msg_twist.linear.x = self.lin_speed
+		msg_twist.angular.z = self.pid.proportional() + self.pid.derivative() + self.pid.integral()
 		self.twist_pub.publish(msg_twist) # publish twist
 
 	def main(args=None):
