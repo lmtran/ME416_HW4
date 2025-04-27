@@ -14,7 +14,7 @@ class LineController(Node):
 		super().__init__('line_controller')
 		self.twist_pub = self.create_publisher(Twist, 'robot_twist', 10)
 		self.error_pub = self.create_publisher(Float64, 'control_error', 10)
-		self.create_subcription(PointStamped. '/image/centroid', self.centroid_callback, 1)
+		self.create_subcription(PointStamped, '/image/centroid', self.centroid_callback, 1)
 
 		self.lin_speed = 0.0
 		self.gain_proportional = 0.0
