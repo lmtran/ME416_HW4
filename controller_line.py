@@ -32,7 +32,6 @@ class LineController(Node):
             time_delay = 0.1 # assume for first one 
         else:
             time_delay = mu.stamp_difference(msg.header.stamp, self.msg_previous.header.stamp)
-        return
         image_width = 640. # pixels (found from downloading image and looking at size)
         img_center = image_width / 2.0
         error_signal = Float64()
