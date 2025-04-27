@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-''' node to command the angular speed of teh robot to make sure the line is always at the center of the image'''
+''' node to command the angular speed of teh robot to make sure
+the line is always at the center of the image'''
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64
-import robot_model as rm
+import me416_utilities as mu
 import controller
 
 class LineController(Node):
@@ -28,13 +29,18 @@ class LineController(Node):
         '''callback for the centroid'''
         image_width = 640. # pixels (found from downloading image and looking at size)
         img_center = image_width / 2.0
-        #error_signal = Float64()
-        error_signal = img_center - (msg.point.x) # compute error
+        error_signal = Float64()
+        error_signal.data = img_center - (msg.point.x) # compute error
         self.error_pub.publish(error_signal) # publish error
+        
+        time_delay = mu.stamp_difference(msg.header.stamp, self.msg_previous.header.stamp)
 
         msg_twist = Twist()
         msg_twist.linear.x = self.lin_speed
-        msg_twist.angular.z = self.pid.proportional() + self.pid.derivative() + self.pid.integral()
+        kp = self.pid.proportional(error_signal)
+        kd = self.pid.derivative(error_signal, time_delay)
+        ki = self.pid.integral(error_signal, time_delay)
+        msg_twist.angular.z = kp + kd + ki
         self.twist_pub.publish(msg_twist) # publish twist
 
 def main(args=None):
@@ -46,4 +52,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
+    
