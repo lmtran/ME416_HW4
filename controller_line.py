@@ -9,7 +9,7 @@ import image_segment
 import controller
 
 class LineController(Node):
-'''node for ensuring line is centered on image'''
+	'''node for ensuring line is centered on image'''
 	def __init__(self):
 		super().__init__('line_controller')
 		self.twist_pub = self.create_publisher(Twist, 'robot_twist', 10)
