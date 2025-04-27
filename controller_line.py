@@ -37,12 +37,12 @@ class LineController(Node):
         msg_twist.angular.z = self.pid.proportional() + self.pid.derivative() + self.pid.integral()
         self.twist_pub.publish(msg_twist) # publish twist
 
-    def main(args=None):
-        rclpy.init(args=args)
-        line_controller = LineController()
-        rclpy.spin(line_controller)
-        line_controller.destroy_node()
-        rclpy.shutdown()
+def main(args=None):
+    rclpy.init(args=args)
+    line_controller = LineController()
+    rclpy.spin(line_controller)
+    line_controller.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
