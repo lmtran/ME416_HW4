@@ -13,7 +13,8 @@ class LineController(Node):
     '''node for ensuring line is centered on image'''
     def __init__(self):
         super().__init__('line_controller')
-        self.twist_pub = self.create_publisher(Twist, 'robot_twist', 10)
+        self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+		# changed twist_pub from type robot_twist to cmd_vel for Node autograder
         self.error_pub = self.create_publisher(Float64, 'control_error', 10)
         self.create_subscription(PointStamped, '/image/centroid', self.centroid_callback, 1)
 
@@ -27,6 +28,9 @@ class LineController(Node):
 
     def centroid_callback(self, msg):
         '''callback for the centroid'''
+		if msg_previous is None:
+			self.msg_previous = msg 
+			return # need to skip the first time because of none value
         image_width = 640. # pixels (found from downloading image and looking at size)
         img_center = image_width / 2.0
         error_signal = Float64()
@@ -37,11 +41,13 @@ class LineController(Node):
 
         msg_twist = Twist()
         msg_twist.linear.x = self.lin_speed
-        kp = self.pid.proportional(error_signal)
-        kd = self.pid.derivative(error_signal, time_delay)
-        ki = self.pid.integral(error_signal, time_delay)
+        kp = self.pid.proportional(error_signal.data)
+        kd = self.pid.derivative(error_signal.data, time_delay)
+        ki = self.pid.integral(error_signal.data, time_delay)
         msg_twist.angular.z = kp + kd + ki
         self.twist_pub.publish(msg_twist) # publish twist
+
+		self.msg_previous = msg # need to update msg for next time
 
 def main(args=None):
     rclpy.init(args=args)
@@ -52,4 +58,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-    
