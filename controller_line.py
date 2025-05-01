@@ -19,9 +19,7 @@ class LineController(Node):
         self.create_subscription(PointStamped, '/image/centroid', self.centroid_callback, 1)
 
         self.lin_speed = 0.0
-        self.gain_proportional = 0.0
-        self.gain_derivative = 0.0
-        self.gain_integral = 0.0
+        self.gain_proportional, self.gain_derivative, self.gain_integral = 0.0, 0.0, 0.0
 
         self.pid = controller.PID(self.gain_proportional, self.gain_derivative, self.gain_integral)
         self.msg_previous = None
